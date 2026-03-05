@@ -1,14 +1,13 @@
 const addForm = document.querySelector(".add");
-const search = document.querySelector(".search input");
+const searchInput = document.querySelector(".search input");
 const list = document.querySelector(".todos");
 const addButton = document.querySelector(".btn");
 
-let editIndex = null;
+let Index = null;
 
 addForm.addEventListener("submit", function (e) {
   e.preventDefault();
-
-  if (editIndex === null) {
+  if (Index === null) {
     list.innerHTML += `
      <li class="list-group-item d-flex justify-content-between align-items-center">
         <span>${addForm.add.value}</span>
@@ -17,24 +16,19 @@ addForm.addEventListener("submit", function (e) {
           <i class="far fa-trash-alt delete"></i>
         </div>
       </li>
-  
   `;
   } else {
-    list.children[editIndex].querySelector("span").textContent =
+    list.children[Index].querySelector("span").textContent =
       addForm.add.value;
-    console.log(list.children[editIndex].querySelector("span"));
-    editIndex = null;
+    Index = null;
     addButton.textContent = "Add Todo";
   }
 
-  // addForm.add.value = ""
   addForm.reset();
 });
 
 list.addEventListener("click", function (e) {
   if (e.target.classList.contains("delete")) {
-    console.log(e.target.parentElement.parentElement);
-
     e.target.parentElement.parentElement.remove();
     alert(" Are you sure you want to delete this todo?");
   }
@@ -47,7 +41,7 @@ list.addEventListener("click", function (e) {
     for (let i = 0; i < items.length; i++) {
       if (items[i] === targetItem) {
         console.log(i);
-        editIndex = i;
+        Index = i;
       }
     }
 
@@ -55,3 +49,21 @@ list.addEventListener("click", function (e) {
       e.target.parentElement.previousElementSibling.textContent;
   }
 });
+
+
+const filter = searchInput.value.toUpperCase();
+const items = list.getElementsByTagName("li");
+
+  for (let i = 0; i < items.length; i++) {
+    const span = items[i].getElementsByTagName("span")[0];
+    const textValue = span.textContent || span.innerText;
+
+    if (textValue.toUpperCase().indexOf(filter) > -1) {
+      items[i].style.display = "";
+    } else {
+      items[i].style.display = "none";
+    }
+  }
+
+searchInput.addEventListener("keyup", myFunction);
+searchInput.addEventListener("input", myFunction);
