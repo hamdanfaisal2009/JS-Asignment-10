@@ -1,53 +1,57 @@
-const ul = document.querySelector("ul");
-const input = document.querySelector("input");
-const button = document.querySelector("button");
+const addForm = document.querySelector(".add");
+const search = document.querySelector(".search input");
+const list = document.querySelector(".todos");
+const addButton = document.querySelector(".btn");
 
-button.addEventListener("click", function () {
+let editIndex = null;
 
-    if (input.value.trim() === "") {
-        alert("Please enter a Task to make a new Todo Task");
-        return;
-    }
+addForm.addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    const li = document.createElement("li");
-    li.textContent = input.value;
-    li.classList.add("delete"); 
-    
+  if (editIndex === null) {
+    list.innerHTML += `
+     <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>${addForm.add.value}</span>
+        <div>
+          <i class="fas fa-edit edit"></i>
+          <i class="far fa-trash-alt delete"></i>
+        </div>
+      </li>
   
-    li.addEventListener("click", () => {
-        const confirmDelete = confirm("Are you sure you want to delete this task?");
-        if(confirmDelete){
-            const placeholder = document.createElement("li");
-            placeholder.textContent = "This task has been deleted";
-            placeholder.classList.add("deleted");
-            li.replaceWith(placeholder);
-        }
-    });
-    
-    ul.append(li);
+  `;
+  } else {
+    list.children[editIndex].querySelector("span").textContent =
+      addForm.add.value;
+    console.log(list.children[editIndex].querySelector("span"));
+    editIndex = null;
+    addButton.textContent = "Add Todo";
+  }
 
-    input.value = "";
+  // addForm.add.value = ""
+  addForm.reset();
 });
 
-const lineItems = document.querySelectorAll(".line");
+list.addEventListener("click", function (e) {
+  if (e.target.classList.contains("delete")) {
+    console.log(e.target.parentElement.parentElement);
 
-lineItems.forEach(li => {
-  li.addEventListener("click", () => {
-    li.classList.toggle("done");
-  });
-});
+    e.target.parentElement.parentElement.remove();
+    alert(" Are you sure you want to delete this todo?");
+  }
 
-const deleteItems = document.querySelectorAll(".delete");
+  if (e.target.classList.contains("edit")) {
+    const items = list.children;
+    const targetItem = e.target.parentElement.parentElement;
+    addButton.textContent = "Update Todo";
 
-deleteItems.forEach(li => {
-  li.addEventListener("click", () => {
-    const confirmDelete = confirm("Are you sure you want to delete this task?");
-    if(confirmDelete){
-      const placeholder = document.createElement("li");
-      placeholder.textContent = "This task has been deleted";
-      placeholder.classList.add("deleted");
-      li.replaceWith(placeholder);
+    for (let i = 0; i < items.length; i++) {
+      if (items[i] === targetItem) {
+        console.log(i);
+        editIndex = i;
+      }
     }
-  });
-});
 
+    addForm.add.value =
+      e.target.parentElement.previousElementSibling.textContent;
+  }
+});
